@@ -25,6 +25,8 @@ import java.util.LinkedList;
 public class Jframe1 extends JFrame implements Runnable, KeyListener{
     private final int iMAXANCHO = 10; // maximo numero de personajes por ancho
     private final int iMAXALTO = 8;  // maximo numero de personajes por alto
+    private final int iWidth = 800;
+    private final int iHeight = 500;
     private Base basMalo;        // Objeto malo
     private LinkedList <Base> llsFantasmas;   //Linkedlist de fantasmas
     private LinkedList <Base> llsJuanito;     //LinkedList Juanito
