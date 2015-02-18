@@ -1,6 +1,12 @@
 /**
- * Clase SoundClip
+ * SoundClip
  *
+ * Modela la definición de todos los objetos de tipo
+ * <code>SoundClip</code>
+ *
+ * @author Patricio Sanchez and David Benitez
+ * @version 1.0
+ * @date 2/11/2015
  */
 package jframe1;
 import javax.sound.sampled.UnsupportedAudioFileException;

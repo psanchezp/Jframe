@@ -4,7 +4,7 @@
  * Modela la definición de todos los objetos de tipo
  * <code>Base</code>
  *
- * @author Patricio Sanchez A01191893
+ * @author Patricio Sanchez and David Benitez
  * @version 1.0
  * @date 2/11/2015
  */

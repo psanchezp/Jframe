@@ -33,8 +33,8 @@ public class Jframe1 extends JFrame implements Runnable, KeyListener{
     /* objetos para manejar el buffer del Applet y este no parpadee */
     private Image    imaImagenApplet;   // Imagen a proyectar en Applet	
     private Graphics graGraficaApplet;  // Objeto grafico de la Imagen
-    /* private AudioClip adcSonidoChimpy;   // Objeto sonido de Chimpy
-    private AudioClip adcSonidoJuanito;  // Objeto sonido Juanito */
+    private SoundClip sndSonidoChimpy;   // Objeto sonido de Chimpy
+    private SoundClip sndSonidoJuanito;  // Objeto sonido Juanito */
     
     /* Variables para las vidas y puntos */
     private int iVidas;
@@ -74,10 +74,10 @@ public class Jframe1 extends JFrame implements Runnable, KeyListener{
         iCantJuanitos = (int) (Math.random() * 6) + 10;
         
         for (int iI = 0; iI < iCantJuanitos; iI++){
-            int iPosX = ((int)(Math.random()*(getWidth())));    
-            int iPosY = -(int) (Math.random() *(getHeight()));
-            Base basJuanito = new Base(iPosX,iPosY,getWidth()/iMAXANCHO,
-            getHeight()/iMAXALTO,
+            int iPosX = ((int)(Math.random()*(iWidth)));    
+            int iPosY = -(int) (Math.random() *(iHeight));
+            Base basJuanito = new Base(iPosX,iPosY,iWidth/iMAXANCHO,
+            iHeight/iMAXALTO,
             Toolkit.getDefaultToolkit().getImage(urlImagenJuanito));
             llsJuanito.add(basJuanito);
         }
@@ -86,10 +86,10 @@ public class Jframe1 extends JFrame implements Runnable, KeyListener{
 	URL urlImagenMalo = this.getClass().getResource("diddy.gif");
         
         // se crea el objeto para malo 
-        int iPosX = (iMAXANCHO - 1) * getWidth() / iMAXANCHO;
-        int iPosY = (iMAXALTO - 1) * getHeight() / iMAXALTO;        
-	basMalo = new Base(iPosX,iPosY, getWidth() / iMAXANCHO,
-                getHeight() / iMAXALTO,
+        int iPosX = (iMAXANCHO - 1) * iWidth / iMAXANCHO;
+        int iPosY = (iMAXALTO - 1) * iHeight / iMAXALTO;        
+	basMalo = new Base(iPosX,iPosY, iWidth / iMAXANCHO,
+                iHeight / iMAXALTO,
                 Toolkit.getDefaultToolkit().getImage(urlImagenMalo));
         
         //Creando los fantasmas
@@ -99,21 +99,18 @@ public class Jframe1 extends JFrame implements Runnable, KeyListener{
         iCantFantasmas = (int) (Math.random() * 3) + 8;
         
         for (int iI = 0; iI < iCantFantasmas; iI++){
-            iPosX = -((int)(Math.random()*(getWidth())));    
-            iPosY = (int) (Math.random() *(getHeight()));
-            Base basFantasma = new Base(iPosX,iPosY,getWidth()/iMAXANCHO,
-            getHeight()/iMAXALTO,
+            iPosX = -((int)(Math.random()*(iWidth)));    
+            iPosY = (int) (Math.random() *(iHeight));
+            Base basFantasma = new Base(iPosX,iPosY,iWidth/iMAXANCHO,
+            iHeight/iMAXALTO,
             Toolkit.getDefaultToolkit().getImage(urlImagenFantasma));
             llsFantasmas.add(basFantasma);
         }
         
-        /*Inicializacion de los Sonidos
-        URL urlSonidoChimpy = this.getClass().getResource("monkey2.wav");
-        adcSonidoChimpy = getAudioClip (urlSonidoChimpy);
+
+        sndSonidoChimpy = new SoundClip("monkey2.wav");
         
-        URL urlSonidoJuanito = this.getClass().getResource("monkey1.wav");
-        adcSonidoJuanito = getAudioClip (urlSonidoJuanito);
-        */
+        sndSonidoJuanito = new SoundClip("monkey1.wav");
         
         //Creando game over
         URL urlImagenGameOver = this.getClass().getResource("game-over.gif");
@@ -123,6 +120,10 @@ public class Jframe1 extends JFrame implements Runnable, KeyListener{
         
         //Inicializando el keylistener
         addKeyListener(this);
+        
+        //Inicializacion del Hilo
+        Thread th = new Thread (this);
+        th.start();
     }
     
     /** 
@@ -190,7 +191,7 @@ public class Jframe1 extends JFrame implements Runnable, KeyListener{
         //Velocidad de Juanitos dependen de las vidas
         for(Base basJuanito : llsJuanito){
             if(iVidas != 0){
-                basJuanito.setY(basJuanito.getY() + 5/iVidas);
+                basJuanito.setY(basJuanito.getY() + 6 - iVidas);
             }
         }
         
@@ -208,14 +209,14 @@ public class Jframe1 extends JFrame implements Runnable, KeyListener{
     public void checaColision(){
         switch(iDireccion){
             case 1: { //Revisa colision cuando sube
-                    if (basMalo.getY() < 0) {
+                    if (basMalo.getY() < 18) {
                             iDireccion = 0;
-                            basMalo.setY(basMalo.getY() + 1);
+                            basMalo.setY(basMalo.getY() + 19);
                     }
                     break;    	
             }     
             case 2: { //Revisa colision cuando baja
-                    if (basMalo.getY() + basMalo.getAlto() > getHeight()) {
+                    if (basMalo.getY() + basMalo.getAlto() > iHeight) {
                             iDireccion = 0;
                             basMalo.setY(basMalo.getY() - 1);
                     }
@@ -229,7 +230,7 @@ public class Jframe1 extends JFrame implements Runnable, KeyListener{
                     break;    	
             }    
             case 4: { //Revisa colision cuando va derecha.
-                    if (basMalo.getX() + basMalo.getAncho() > getWidth()) {
+                    if (basMalo.getX() + basMalo.getAncho() > iWidth) {
                             iDireccion = 0;
                             basMalo.setX(basMalo.getX() - 1);
                     }
@@ -241,20 +242,20 @@ public class Jframe1 extends JFrame implements Runnable, KeyListener{
         for (Base basFantasmita : llsFantasmas){
             if (basMalo.intersecta(basFantasmita)){
                 iPuntos ++;
-                //adcSonidoChimpy.play();
-                basFantasmita.setX(-(int)(getWidth() * (Math.random())));
-                basFantasmita.setY((int) (Math.random() *(getHeight())));
+                sndSonidoChimpy.play();
+                basFantasmita.setX(-(int)(iWidth * (Math.random())));
+                basFantasmita.setY((int) (Math.random() *(iHeight)));
             }
         }
 
         for (Base basFantasmita : llsFantasmas){
-            if (basFantasmita.getY() + basFantasmita.getAlto() > getHeight()){
-                basFantasmita.setY(getHeight() - basFantasmita.getAlto());
+            if (basFantasmita.getY() + basFantasmita.getAlto() > iHeight){
+                basFantasmita.setY(iHeight - basFantasmita.getAlto());
             }
 
-            if (basFantasmita.getX() >= getWidth()){
-                basFantasmita.setX(-(int)(getWidth() * (Math.random())));
-                basFantasmita.setY((int) (Math.random() *(getHeight())));
+            if (basFantasmita.getX() >= iWidth){
+                basFantasmita.setX(-(int)(iWidth * (Math.random())));
+                basFantasmita.setY((int) (Math.random() *(iHeight)));
             }
         }
         
@@ -262,24 +263,24 @@ public class Jframe1 extends JFrame implements Runnable, KeyListener{
         for (Base basJuanito : llsJuanito){
             if (basMalo.intersecta(basJuanito)){
                 iJuanitosChocados ++;
-                //adcSonidoJuanito.play();
-                basJuanito.setX((int)(getWidth() * (Math.random())));
-                basJuanito.setY(-(int) (Math.random() *(getHeight())));
+                sndSonidoJuanito.play();
+                basJuanito.setX((int)(iWidth * (Math.random())));
+                basJuanito.setY(-(int) (Math.random() *(iHeight)));
             }
         }
 
         for (Base basJuanito : llsJuanito){
-            if (basJuanito.getX() + basJuanito.getAncho() > getWidth()){
-                basJuanito.setX(getWidth() - basJuanito.getAncho());
+            if (basJuanito.getX() + basJuanito.getAncho() > iWidth){
+                basJuanito.setX(iWidth - basJuanito.getAncho());
             }
             
             if(basJuanito.getX() <= 0){
                 basJuanito.setX(basJuanito.getX() + basJuanito.getAncho());
             }
 
-            if (basJuanito.getY() >= getHeight()){
-                basJuanito.setX((int)(getWidth() * (Math.random())) + 1);
-                basJuanito.setY((int) (Math.random()*getHeight() - (getHeight())));
+            if (basJuanito.getY() >= iHeight){
+                basJuanito.setX((int)(iWidth * (Math.random())) + 1);
+                basJuanito.setY((int) (Math.random()*iHeight - (iHeight)));
             }
         }
         
@@ -311,7 +312,7 @@ public class Jframe1 extends JFrame implements Runnable, KeyListener{
         // Actualiza la imagen de fondo.
         URL urlImagenFondo = this.getClass().getResource("Ciudad.png");
         Image imaImagenFondo = Toolkit.getDefaultToolkit().getImage(urlImagenFondo);
-         graGraficaApplet.drawImage(imaImagenFondo, 0, 0, getWidth(), getHeight(), this);
+         graGraficaApplet.drawImage(imaImagenFondo, 0, 0, iWidth, iHeight, this);
 
         // Actualiza el Foreground.
         graGraficaApplet.setColor (getForeground());
@@ -348,8 +349,8 @@ public class Jframe1 extends JFrame implements Runnable, KeyListener{
                 }
                 //Puntos y vidas desplegados en la esquina superior izquierda
                 graDibujo.setColor(Color.red);
-                graDibujo.drawString("Puntos: " + iPuntos, 15, 15);
-                graDibujo.drawString ("Vidas: " + iVidas, 15, 25);
+                graDibujo.drawString("Puntos: " + iPuntos, 15, 45);
+                graDibujo.drawString ("Vidas: " + iVidas, 15, 60);
             }
             else{
                 basGameOver.paint(graDibujo, this);
