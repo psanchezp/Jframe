@@ -8,6 +8,8 @@
  * @version 1.0
  * @date 2/11/2015
  */
+
+package jframe1;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Rectangle;
