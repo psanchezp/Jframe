@@ -17,15 +17,20 @@ import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.URL;
 import java.util.LinkedList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 public class Jframe1 extends JFrame implements Runnable, KeyListener{
     private final int iMAXANCHO = 10; // maximo numero de personajes por ancho
     private final int iMAXALTO = 8;  // maximo numero de personajes por alto
-    private static final int iWidth = 800; //Tamaño
-    private static final int iHeight = 500; //Tamaño
+    private static final int iWidth = 800; //ancho de la pantalla
+    private static final int iHeight = 500; //alto de la pantalla
     private Base basMalo;        // Objeto malo
     private LinkedList <Base> llsFantasmas;   //Linkedlist de fantasmas
     private LinkedList <Base> llsJuanito;     //LinkedList Juanito
@@ -388,11 +393,53 @@ public class Jframe1 extends JFrame implements Runnable, KeyListener{
         if (ke.getKeyCode() == KeyEvent.VK_P){
             bPause = !bPause;
         }
+        
+        //Al presionar G se guarda el juego
+        if (ke.getKeyCode() == KeyEvent.VK_G){
+            try {
+                grabarJuego();
+            } catch (IOException ex) {
+                Logger.getLogger(Jframe1.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
     }
 
     @Override
     public void keyReleased(KeyEvent ke) {
         
+    }
+    
+    
+    public void grabarJuego() throws IOException {
+        PrintWriter fileOut = new PrintWriter(new FileWriter("gameData.txt"));
+
+        //se guardan variables generales
+        fileOut.println(bPause); //se guarda si el juego estaba en pausa
+        fileOut.println(bVivo); //Se guarda si lolita está viva
+        fileOut.println(iVidas); //Se guarda vidas
+        fileOut.println(iPuntos); //Se guarda el puntaje
+        fileOut.println(iDireccion); //Se guarda la dirección
+        
+        //se guardan variables de lolita
+        fileOut.println(basMalo.getX()); //Se guarda x de lolita
+        fileOut.println(basMalo.getY()); //se guarda y de lolita
+                
+        //se guardan variables de juanito
+        fileOut.println(iJuanitosChocados); //guarda cuantos juanitos chocaron
+        fileOut.println(iCantJuanitos); //Se guarda la cantidad de juanitos
+        for(Base basJuanito : llsJuanito){ //para todos los juanitos
+                fileOut.println(basJuanito.getX()); //se guarda x de juanito
+                fileOut.println(basJuanito.getY()); //se guarda y de juanito
+        }
+        
+        //se guardan variables de fantasma
+        fileOut.println(iCantFantasmas); //Se guarda la cantidad de fantasmas
+        for(Base basFantasmita : llsFantasmas){ //para todos los fantasmas
+                fileOut.println(basFantasmita.getX()); //se guarda x de fantasma
+                fileOut.println(basFantasmita.getY()); //se guarda y de fantasma
+        }
+        
+        fileOut.close();    //Se cierra el archivo
     }
     
     /**
