@@ -422,6 +422,11 @@ public class Jframe1 extends JFrame implements Runnable, KeyListener{
         
     }
     
+    /**
+     * Clase para guardar datos del juego actual
+     * 
+     * @throws IOException 
+     */
     public void grabarJuego() throws IOException {
         PrintWriter fileOut = new PrintWriter(new FileWriter("gameData.txt"));
 
@@ -454,6 +459,11 @@ public class Jframe1 extends JFrame implements Runnable, KeyListener{
         fileOut.close();    //Se cierra el archivo
     }
     
+    /**
+     * Clase para cargar datos de un juego guardado
+     * 
+     * @throws IOException 
+     */
     public void cargarJuego() throws IOException {
                                                                   
         BufferedReader fileIn;
@@ -492,18 +502,46 @@ public class Jframe1 extends JFrame implements Runnable, KeyListener{
         aux = fileIn.readLine();
         iJuanitosChocados = (Integer.parseInt(aux)); //cuantos juanitos chocaron
         aux = fileIn.readLine();
-        iCantJuanitos = (Integer.parseInt(aux)); //cuantos juanitos hay
-        for(int iI = 0; iI < iCantJuanitos; iI++) {//posiciones
-            llsJuanito.get(iI).setX(Integer.parseInt(fileIn.readLine()));
-            llsJuanito.get(iI).setY(Integer.parseInt(fileIn.readLine()));
+        
+        for(Base basJuanito : llsJuanito){//Borro los Juanitos actuales
+            llsJuanito.pop();
+        }
+               
+        iCantJuanitos = (Integer.parseInt(aux)); //cuantos juanitos hay   
+        
+        URL urlImagenJuanito = this.getClass().getResource("juanito.gif");
+        
+        int iPosX;
+        int iPosY;
+        //Se hacen nuevos juanitos
+        for (int iI = 0; iI < iCantJuanitos; iI++){
+            iPosX = Integer.parseInt(fileIn.readLine());   
+            iPosY = Integer.parseInt(fileIn.readLine()); 
+            Base basJuanito = new Base(iPosX,iPosY,iWidth/iMAXANCHO,
+            iHeight/iMAXALTO,
+            Toolkit.getDefaultToolkit().getImage(urlImagenJuanito));
+            llsJuanito.add(basJuanito);
+        }
+        
+        
+        for(Base basFantasmita : llsFantasmas){//Borro los fantasmas actuales
+            llsFantasmas.pop();
         }
         
         //leo variables de fantasmas
         aux = fileIn.readLine();
         iCantFantasmas = (Integer.parseInt(aux)); //cuantos fantasmas hay
-        for(int iI = 0; iI < iCantFantasmas; iI++) { //posiciones
-            llsFantasmas.get(iI).setX(Integer.parseInt(fileIn.readLine()));
-            llsFantasmas.get(iI).setY(Integer.parseInt(fileIn.readLine()));
+        
+        
+        URL urlImagenFantasma = this.getClass().getResource("fantasmita.gif");
+        //Se crean fantasmas en posiciones del archivo
+        for (int iI = 0; iI < iCantFantasmas; iI++){
+            iPosX = Integer.parseInt(fileIn.readLine());   
+            iPosY = Integer.parseInt(fileIn.readLine()); 
+            Base basFantasma = new Base(iPosX,iPosY,iWidth/iMAXANCHO,
+            iHeight/iMAXALTO,
+            Toolkit.getDefaultToolkit().getImage(urlImagenFantasma));
+            llsFantasmas.add(basFantasma);
         }
         
         fileIn.close();
