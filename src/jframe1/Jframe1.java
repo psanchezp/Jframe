@@ -17,6 +17,10 @@ import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -402,13 +406,21 @@ public class Jframe1 extends JFrame implements Runnable, KeyListener{
                 Logger.getLogger(Jframe1.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
+        
+        //Al presionar C se carga el juego
+        if (ke.getKeyCode() == KeyEvent.VK_C) {
+            try {
+                cargarJuego();
+            } catch (IOException ex) {
+                Logger.getLogger(Jframe1.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
     }
 
     @Override
     public void keyReleased(KeyEvent ke) {
         
     }
-    
     
     public void grabarJuego() throws IOException {
         PrintWriter fileOut = new PrintWriter(new FileWriter("gameData.txt"));
@@ -440,6 +452,61 @@ public class Jframe1 extends JFrame implements Runnable, KeyListener{
         }
         
         fileOut.close();    //Se cierra el archivo
+    }
+    
+    public void cargarJuego() throws IOException {
+                                                                  
+        BufferedReader fileIn;
+        try {
+                fileIn = new BufferedReader(new FileReader("gameData.txt"));
+        } catch (FileNotFoundException e){
+                File puntos = new File("gameData.txt");
+                PrintWriter fileOut = new PrintWriter(puntos);
+                fileOut.println("100,demo");
+                fileOut.close();
+                fileIn = new BufferedReader(new FileReader("gameData.txt"));
+        }
+        
+        String aux = fileIn.readLine();
+        bPause = (Boolean.parseBoolean(aux)); //Leo si el juego está en pausa
+        
+        aux = fileIn.readLine();
+        bVivo = (Boolean.parseBoolean(aux)); //Leo si lolita está viva
+        
+        aux = fileIn.readLine();
+        iVidas = (Integer.parseInt(aux)); //leo vidas
+        
+        aux = fileIn.readLine();
+        iPuntos = (Integer.parseInt(aux)); //leo puntaje
+        
+        aux = fileIn.readLine();
+        iDireccion = (Integer.parseInt(aux)); //leo direccion
+        
+        aux = fileIn.readLine();
+        basMalo.setX((Integer.parseInt(aux))); //leo posicion x de lolita
+        
+        aux = fileIn.readLine();
+        basMalo.setY((Integer.parseInt(aux))); //leo posicion y de lolita
+        
+        //leo variables de juanitos
+        aux = fileIn.readLine();
+        iJuanitosChocados = (Integer.parseInt(aux)); //cuantos juanitos chocaron
+        aux = fileIn.readLine();
+        iCantJuanitos = (Integer.parseInt(aux)); //cuantos juanitos hay
+        for(int iI = 0; iI < iCantJuanitos; iI++) {//posiciones
+            llsJuanito.get(iI).setX(Integer.parseInt(fileIn.readLine()));
+            llsJuanito.get(iI).setY(Integer.parseInt(fileIn.readLine()));
+        }
+        
+        //leo variables de fantasmas
+        aux = fileIn.readLine();
+        iCantFantasmas = (Integer.parseInt(aux)); //cuantos fantasmas hay
+        for(int iI = 0; iI < iCantFantasmas; iI++) { //posiciones
+            llsFantasmas.get(iI).setX(Integer.parseInt(fileIn.readLine()));
+            llsFantasmas.get(iI).setY(Integer.parseInt(fileIn.readLine()));
+        }
+        
+        fileIn.close();
     }
     
     /**
